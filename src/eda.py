@@ -1,7 +1,8 @@
 # Preeliminary Exploratory Data Analysis, run after data acquisition.
 import matplotlib.pyplot as plt
 import seaborn as sns
-from my_module import load_data, plot_barh, plot_hist, plot_grouped_bar
+from data_acquisition import load_data
+from my_module import plot_barh, plot_hist, plot_grouped_bar
 
 telemetry_df, errors_df, maint_df, failures_df, machines_df = load_data()
 

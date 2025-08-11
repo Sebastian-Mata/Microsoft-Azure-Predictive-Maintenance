@@ -28,28 +28,7 @@ from sklearn.metrics import (
     accuracy_score,
 )
 from sklearn.base import BaseEstimator, TransformerMixin
-
-
-# Data Loading
-def load_data():
-    """Load datasets from CSV files into pandas DataFrames.
-    Returns:
-        tuple: A tuple containing DataFrames for telemetry, errors, maintenance,
-               failures, and machines. In the order:
-               (telemetry_df, errors_df, maint_df, failures_df, machines_df)
-    """
-    telemetry_df = pd.read_csv("data/telemetry.csv", parse_dates=["datetime"])
-    errors_df = pd.read_csv("data/errors.csv", parse_dates=["datetime"])
-    maint_df = pd.read_csv("data/maint.csv", parse_dates=["datetime"])
-    failures_df = pd.read_csv("data/failures.csv", parse_dates=["datetime"])
-    machines_df = pd.read_csv("data/machines.csv")
-
-    return telemetry_df, errors_df, maint_df, failures_df, machines_df
-
-
-# Load DataFrames for data dependent functions
-telemetry, errors, maintenance, failures, machines = load_data()
-
+from uuid import uuid4
 
 # Plotting Functions
 def plot_hist(df, feature_name, log=False, bins=100):
@@ -71,7 +50,7 @@ def plot_hist(df, feature_name, log=False, bins=100):
     plt.xlabel(feature_name)
     plt.ylabel("Frequency")
     plt.grid()
-    plt.show(block=False)
+    plt.savefig(f"data/graphs/histogram-{feature_name}.png")
 
 
 def plot_barh(df, feature_name, log=False, title=None, xlabel=None):
@@ -93,7 +72,7 @@ def plot_barh(df, feature_name, log=False, title=None, xlabel=None):
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(feature_name)
-    plt.show(block=False)
+    plt.savefig(f"data/graphs/barh-{feature_name}-{title}.png")
 
 
 def plot_grouped_bar(df, index, columns, values, title=None, xlabel=None, ylabel=None):
@@ -117,7 +96,7 @@ def plot_grouped_bar(df, index, columns, values, title=None, xlabel=None, ylabel
     df_pivot.plot.bar(stacked=True, figsize=(20, 6), title=title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.show(block=False)
+    plt.savefig(f"data/graphs/{title}-{xlabel}-{ylabel}-{uuid4()}.png")
 
 
 # Check if the machine will fail in the near future (time window)
@@ -134,7 +113,6 @@ def check_future_failure(current_time, failure_times, window_hours):
 
 # Create new columns determining if an error type happened within the time window [Data Dependent Function]
 # # List existing machines by ID
-machine_ids = telemetry["machineID"].unique().tolist()
 
 
 # Function
@@ -145,6 +123,8 @@ def add_error_flags_per_machine(telemetry_df, errors_df, error_label):
     e = errors_df[errors_df["errorID"] == error_label].rename(
         columns={"datetime": timecol}
     )
+
+    machine_ids = telemetry_df["machineID"].unique().tolist()
 
     for m in machine_ids:
         left_mask = telemetry_df["machineID"] == m
@@ -180,6 +160,8 @@ def add_time_since_maint(telemetry_df, maint_df, comp_label):
     telemetry_df[f"time_since_maint_{comp_label}_d"] = pd.NA
 
     m = maint_df[maint_df["comp"] == comp_label].rename(columns={"datetime": timecol})
+
+    machine_ids = telemetry_df["machineID"].unique().tolist()
 
     for m_id in machine_ids:
         left_mask = telemetry_df["machineID"] == m_id
@@ -246,7 +228,29 @@ def add_sensor_features(df, sensors, lags, rmeans, rstds, slopes):
 
 
 # Make training, validation and test splits
-def build_split(X, y, train_mask, val_mask, test_mask, label):
+def build_split(
+    X: np.ndarray,
+    y: np.ndarray,
+    train_mask: np.ndarray,
+    val_mask: np.ndarray,
+    test_mask: np.ndarray,
+    label: str,
+    timestamps: pd.Series,
+) -> dict:
+    """This function builds an split of the dataset
+
+    Args:
+        X (np.ndarray): train features
+        y (np.ndarray): labels
+        train_mask (np.ndarray): target mask
+        val_mask (np.ndarray): label mask
+        test_mask (np.ndarray): skdljfaslk
+        label (str): name applied
+        timestamps (pd.DataFrame): series with timestamps
+
+    Returns:
+        dict: mapping of filtered datasets
+    """
     # Return an ordered dictionary of splits
     ds = OrderedDict()
     ds[f"X_train_{label}"] = X[train_mask]
@@ -267,9 +271,7 @@ def build_split(X, y, train_mask, val_mask, test_mask, label):
 
     # Check for temporal leak (date times)
     for split, mask in [("train", train_mask), ("val", val_mask), ("test", test_mask)]:
-        print(
-            f"{split:>5} range: {telemetry.loc[mask, 'datetime'].min()} → {telemetry.loc[mask, 'datetime'].max()}"
-        )
+        print(f"{split:>5} range: {timestamps[mask].min()} → {timestamps[mask].max()}")
 
     return ds
 
@@ -324,7 +326,7 @@ def plot_roc(y_true, y_prob, title):
     plt.title(title)
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.savefig(f"data/graphs/roc-curve-{title}-{uuid4()}.png")
 
 
 # Display confusion matrix
@@ -448,7 +450,7 @@ def make_rf_fast(X_sample):
 
 # Runner that saves and returns models by horizon (trains, selects F2 threshold and evaluates VAL/TEST)
 def evaluate_and_save_models_for_horizon(
-    splits, label, save_dir="models_step7", cache_dir=None
+    splits, label, save_dir="models_step7"
 ):
     X_train, y_train = splits[f"X_train_{label}"], splits[f"y_train_{label}"]
     X_val, y_val = splits[f"X_val_{label}"], splits[f"y_val_{label}"]
@@ -573,5 +575,5 @@ def group_importance_rf_from_pipeline(pipeline, title: str):
     plt.title(f"Importance by family — {title}")
     plt.gca().invert_yaxis()
     plt.grid(axis="x", alpha=0.3)
-    plt.show()
+    plt.savefig(f"data/graphs/{title}.png")
     return grp, df_imp.sort_values("importance", ascending=False)
