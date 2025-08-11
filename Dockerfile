@@ -13,7 +13,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.8.8 /uv /uvx /bin/
 # Copy project files
 COPY pyproject.toml uv.lock ./
 COPY src/ ./src/
-COPY models/ ./models/
+COPY data/models/ ./data/models/
 
 
 # Install dependencies with UV

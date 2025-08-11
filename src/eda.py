@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 from data_acquisition import load_data
-from src.functions import plot_barh, plot_hist, plot_grouped_bar
+from functions import plot_barh, plot_hist, plot_grouped_bar
 
 telemetry_df, errors_df, maint_df, failures_df, machines_df = load_data()
 

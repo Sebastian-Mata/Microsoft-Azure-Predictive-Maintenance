@@ -1,6 +1,6 @@
 # Microsoft-Azure-Predictive-Maintenance
 
-This an end-to-end ML solution for the prediction of machine failures. This code is based of a predictive maintenance project using Azure and Kaggle datasets. It downloads datasets, processes them, and prepares them for analysis.
+This an end-to-end ML solution for the prediction of machine failures. This code is based on a predictive maintenance project using Azure and Kaggle datasets. It downloads datasets, processes them, and prepares them for analysis.
 It includes data preprocessing, exploratory data analysis (EDA), and model creating/training scripts. The project is structured to facilitate easy understanding and modification for predictive maintenance tasks.
 
 This project runs on Python 3.13 and uses a virtual environment for package management and isolation made with Astral's UV.

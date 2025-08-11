@@ -53,7 +53,7 @@ def plot_hist(df, feature_name, log=False, bins=100):
     plt.savefig(f"data/graphs/histogram-{feature_name}.png")
 
 
-def plot_barh(df, feature_name, log=False, title=None, xlabel=None):
+def plot_barh(df, feature_name, log=False, title="", xlabel=""):
     """Plot horizontal bar chart of a feature in the DataFrame.
     Args:
         df (pd.DataFrame): DataFrame containing the feature.
@@ -75,7 +75,7 @@ def plot_barh(df, feature_name, log=False, title=None, xlabel=None):
     plt.savefig(f"data/graphs/barh-{feature_name}-{title}.png")
 
 
-def plot_grouped_bar(df, index, columns, values, title=None, xlabel=None, ylabel=None):
+def plot_grouped_bar(df, index, columns, values, title=None, xlabel="", ylabel=""):
     """Plot grouped bar chart from a DataFrame.
     Args:
         df (pd.DataFrame): DataFrame containing the data.
@@ -229,11 +229,11 @@ def add_sensor_features(df, sensors, lags, rmeans, rstds, slopes):
 
 # Make training, validation and test splits
 def build_split(
-    X: np.ndarray,
-    y: np.ndarray,
-    train_mask: np.ndarray,
-    val_mask: np.ndarray,
-    test_mask: np.ndarray,
+    X: pd.DataFrame,
+    y: pd.Series,
+    train_mask: pd.Series,
+    val_mask: pd.Series,
+    test_mask: pd.Series,
     label: str,
     timestamps: pd.Series,
 ) -> dict:

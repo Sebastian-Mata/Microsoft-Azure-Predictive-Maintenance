@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from data_acquisition import load_data
-from src.functions import (
+from functions import (
     check_future_failure,
     add_error_flags_per_machine,
     add_time_since_maint,

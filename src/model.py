@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import joblib
 from IPython.display import display
-from src.functions import (
+from functions import (
     build_split,
     group_importance_rf_from_pipeline,
     evaluate_and_save_models_for_horizon,
