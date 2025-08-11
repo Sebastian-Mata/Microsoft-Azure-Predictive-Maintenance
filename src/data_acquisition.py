@@ -3,23 +3,20 @@ import pandas as pd
 
 # Download latest version of dataset from Kaggle
 path = kagglehub.dataset_download("arnabbiswas1/microsoft-azure-predictive-maintenance")
-
-
 print("\nPath to dataset files:", path)
 
 # Load datasets using pandas into DataFrames
-telemetry_df = pd.read_csv(f"{path}/PdM_telemetry.csv")
-errors_df = pd.read_csv(f"{path}/PdM_errors.csv")
-maint_df = pd.read_csv(f"{path}/PdM_maint.csv")
-failures_df = pd.read_csv(f"{path}/PdM_failures.csv")
+# Since date is in the ISO 8601 date format, we parse it as datetime
+telemetry_df = pd.read_csv(f"{path}/PdM_telemetry.csv", parse_dates=["datetime"])
+errors_df = pd.read_csv(f"{path}/PdM_errors.csv", parse_dates=["datetime"])
+maint_df = pd.read_csv(f"{path}/PdM_maint.csv", parse_dates=["datetime"])
+failures_df = pd.read_csv(f"{path}/PdM_failures.csv", parse_dates=["datetime"])
 machines_df = pd.read_csv(f"{path}/PdM_machines.csv")
 
-# Convert datetime columns to pandas datetime objects and sort DataFrames by datetime and machineID
+# Sort DataFrames by machineID and datetime
 tables = [telemetry_df, maint_df, failures_df, errors_df]
 for df in tables:
-    df["datetime"] = pd.to_datetime(df["datetime"], format="%Y-%m-%d %H:%M:%S")
-    df.sort_values(["datetime", "machineID"], inplace=True, ignore_index=True)
-
+    df.sort_values(["machineID", "datetime"], inplace=True)  # , ignore_index=True)
 
 # Save DataFrames to CSV files in the data directory
 telemetry_df.to_csv("data/telemetry.csv", index=False)
