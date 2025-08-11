@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from data_acquisition import load_data
-from my_module import (
+from src.functions import (
     check_future_failure,
     add_error_flags_per_machine,
     add_time_since_maint,
@@ -16,6 +16,7 @@ LAGS = [1, 3, 6, 12, 24]
 ROLL_MEANS = [3, 6, 12, 24, 48]
 ROLL_STDS = [6, 24, 48]
 SLOPES_K = [3, 6, 12]
+
 
 def process_telemetry(telemetry, failures, machines, errors, maintenance):
     # Generate and initialize target variable

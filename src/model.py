@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import joblib
 from IPython.display import display
-from my_module import (
+from src.functions import (
     build_split,
     group_importance_rf_from_pipeline,
     evaluate_and_save_models_for_horizon,
@@ -71,7 +71,6 @@ splits_48 = build_split(
 # print("\nSaved Files: X_*.parquet y y_*.parquet")
 # print("\nTotal features:", len(features_cols))
 # print("\nFeature example:", features_cols[:10])
-
 
 
 # === Complete evaluation: matrices, metrics y ROC curves (VAL/TEST) for 24h & 48h ===
