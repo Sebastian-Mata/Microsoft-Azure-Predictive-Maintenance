@@ -19,10 +19,12 @@ source .venv/bin/activate
 Run the scripts in the following order:
 1. **Data Acquisition**: `src/data_acquisition.py`
    - Downloads and saves datasets from Kaggle Storage.
-
+   
 **(Optional: Exploratory Data Analysis (EDA))** `src/eda.py`
    - Performs exploratory data analysis (EDA) on the datasets.
 2. **Data Preprocessing**: `src/data_preprocessing.py`
    - Cleans and prepares the data for analysis.
 3. **Model**: `src/model.py`
    - Trains and evaluates the machine learning model on the preprocessed data.
+4. **Deployment**: `src/app.py`
+   - Deploys the trained model as a REST API using FastAPI.
